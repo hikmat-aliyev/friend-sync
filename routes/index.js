@@ -3,7 +3,7 @@ const route = express.Router();
 
 // Define routes
 route.get('/', (req, res) => {
-  res.send('Hello from the router!');
+  res.render('index')
 });
 
 route.get('/about', (req, res) => {
