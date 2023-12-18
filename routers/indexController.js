@@ -6,6 +6,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 const flash = require("connect-flash"); 
+require('dotenv').config();
 
 passport.use(
   new LocalStrategy({ usernameField: 'email', passwordField: 'password' },
@@ -61,10 +62,6 @@ router.get('/', (req, res) => {
 
 router.post(
   "/log-in",
-  (req, res, next) => {
-    console.log('Login route hit');
-    next();
-  },
   passport.authenticate("local", {
     successRedirect: "/user-homepage",
     failureRedirect: "/",

@@ -27,6 +27,10 @@ const userRouter = require('./routers/userController');
 app.use('/', indexRouter);
 app.use('/sign-up', signupRouter);
 app.use('/user-homepage', userRouter);
+app.get('/auth/google/success', (req, res) => {
+  res.send(`${req.user.displayName}`)
+})
+
 
 // Start the server
 const PORT = process.env.PORT || 3000;

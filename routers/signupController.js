@@ -1,13 +1,15 @@
 const express = require('express');
-const route = express.Router();
+const router = express.Router();
+const session = require("express-session");
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const User = require('../models/Users');
+require('dotenv').config();
 
 // Define routes
-route.get('/', (req, res) => {
+router.get('/', (req, res) => {
   res.render('signup_page', {errors: []})
 });
 
@@ -17,8 +19,8 @@ const user_signup_post = [
   .isEmail()
   .withMessage('Invalid email address.')
   .custom(async (value) => {
-    const email = await User.find({ email: value })
-    if(email.length > 0){
+    const email = await User.findOne({ email: value })
+    if(email){
       throw new Error('Email is already registered!')
     }
     return true;
@@ -79,6 +81,78 @@ const user_signup_post = [
     })
 ]
 
-route.post('/', user_signup_post)
+router.post('/', user_signup_post);
 
-module.exports = route;
+//Login with google account strategy
+const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
+
+passport.use(new GoogleStrategy({
+    clientID:     process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/sign-up/auth/google/callback",
+    passReqToCallback   : true
+  },
+  async function(request, accessToken, refreshToken, profile, done) {
+    try {
+      // Find or create the user in the database
+      let user = await User.findOne({ email: profile.email });
+    
+      if (!user) {
+        // If the user does not exist, create a new user
+        user = new User({
+          //Based on properties of profile, create new user
+          email: profile.email,
+          first_name: profile.given_name,
+          last_name: profile.family_name 
+        });
+        await user.save();
+      }
+      // Return the user object for serialization
+      done(null, user);
+    } catch (err) {
+      done(err, null);
+    }
+  }
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch(err) {
+    done(err);
+  };
+});
+
+// Middleware settings
+router.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
+router.use(passport.initialize());
+router.use(passport.session());
+router.use(express.urlencoded({ extended: false })); 
+
+router.get('/auth/google',
+  passport.authenticate('google', { scope:
+      [ 'email', 'profile' ] }
+));
+
+router.get('/auth/google/callback',
+    (req, res, next) => {
+        console.log('Google callback route hit');
+        next();
+    },
+    passport.authenticate('google', {
+        successRedirect: '/user-homepage',
+        failureRedirect: '/auth/google/failure'
+    })
+);
+
+router.use('/auth/logout', (req, res) => {
+  req.session.destroy();
+  res.send('see ya')
+})
+
+module.exports = router;
