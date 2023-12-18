@@ -2,6 +2,11 @@ const express = require('express')
 const app = express();
 require('dotenv').config()
 
+// Parse JSON bodies
+app.use(express.json());
+
+// Parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
 
@@ -15,14 +20,13 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "mongo connection error"));
 
 // Require the router
-const mainRouter = require('./routes/index');
+const indexRouter = require('./routers/indexController');
+const signupRouter = require('./routers/signupController');
+const userRouter = require('./routers/userController');
 // Use the router
-app.use('/', mainRouter);
-// Define a default route
-app.get('/', (req, res) => {
-  res.send('Hello from the main app!');
-});
-
+app.use('/', indexRouter);
+app.use('/sign-up', signupRouter);
+app.use('/user-homepage', userRouter);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
