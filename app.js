@@ -23,15 +23,14 @@ db.on("error", console.error.bind(console, "mongo connection error"));
 const indexRouter = require('./routers/indexController');
 const signupRouter = require('./routers/signupController');
 const userRouter = require('./routers/userController');
+const googleSignUpRouter = require('./routers/googleSignupController');
+const googleSignInRouter = require('./routers/googleSignInController');
 // Use the router
 app.use('/', indexRouter);
 app.use('/sign-up', signupRouter);
 app.use('/user-homepage', userRouter);
-app.get('/auth/google/success', (req, res) => {
-  res.send(`${req.user.displayName}`)
-})
-
-
+app.use('/auth/google', googleSignUpRouter);
+app.use('/auth/google/sign-in', googleSignInRouter)
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

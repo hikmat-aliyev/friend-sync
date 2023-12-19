@@ -18,7 +18,9 @@ passport.use(
           console.log('user not found');
           return done(null, false, { message: "Incorrect email" });
         }
-
+        if(user.password === undefined){
+          return done(null, false, { message: "Incorrect email or password" });
+        }
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
           // passwords do not match!
