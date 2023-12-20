@@ -58,8 +58,7 @@ router.use(express.urlencoded({ extended: false }));
 
 router.get('/', 
 passport.authenticate('google-signup', {
-   scope: ['email', 'profile'], 
-   action: 'sign-up' }));
+   scope: ['email', 'profile']}));
 
 
 router.get('/callback',

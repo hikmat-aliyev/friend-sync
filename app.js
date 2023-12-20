@@ -30,7 +30,11 @@ app.use('/', indexRouter);
 app.use('/sign-up', signupRouter);
 app.use('/user-homepage', userRouter);
 app.use('/auth/google', googleSignUpRouter);
-app.use('/auth/google/sign-in', googleSignInRouter)
+app.use('/auth/google/sign-in', googleSignInRouter);
+app.use('/auth/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/');
+})
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

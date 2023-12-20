@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { DateTime } = require("luxon");
-const findOrCreate = require('mongoose-findorcreate');
 
 const UserSchema = new Schema({
   first_name: { type: String, required: true, maxLength: 100 },
@@ -10,9 +9,6 @@ const UserSchema = new Schema({
   password: { type: String, minLength: 3 },
   date_of_birth: { type: Date },
 });
-
-// Apply the findOrCreate plugin to the schema
-UserSchema.plugin(findOrCreate);
 
 // Virtual for User's full name
 UserSchema.virtual("name").get(function () {

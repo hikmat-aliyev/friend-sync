@@ -8,8 +8,14 @@
 </head>
 <body>
   <h1>Welcome <%= user.first_name %> </h1>
-  <form action="/">
+  <form action="/auth/logout">
     <button type="submit">Log out</button>
+  </form>
+  <form action="/user-homepage/post" method="POST">
+    <div>
+      <input type="text" name="post_text" placeholder="What you are thinking?">
+      <button type="submit">Post</button>
+    </div>
   </form>
 </body>
 </html>

@@ -50,8 +50,7 @@ router.use(passport.session());
 router.use(express.urlencoded({ extended: false })); 
 
 router.get('/', passport.authenticate('google-sign-in', 
-{ scope: ['email', 'profile'], 
-action: 'sign-in' }));
+{ scope: ['email', 'profile']}));
 
 router.get('/callback',
   (req, res, next) => {
@@ -66,11 +65,6 @@ router.get('/callback',
 
 router.get('/failure', (req, res) => {
   res.render('userNotFound')
-})
-
-router.use('/auth/logout', (req, res) => {
-req.session.destroy();
-res.send('see ya')
 })
 
 module.exports = router;
