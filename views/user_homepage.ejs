@@ -8,14 +8,30 @@
 </head>
 <body>
   <h1>Welcome <%= user.first_name %> </h1>
+
   <form action="/auth/logout">
     <button type="submit">Log out</button>
   </form>
+
   <form action="/user-homepage/post" method="POST">
     <div>
       <input type="text" name="post_text" placeholder="What you are thinking?">
       <button type="submit">Post</button>
+      <% if (errors && errors.length > 0) { %>
+        <% for (let error of errors) { %>
+          <p style="color: red;"><%= error.msg %></p>
+        <% } %>
+      <% } %>
     </div>
   </form>
+
+ <div>
+  <% if (posts && posts.length > 0) { %>
+    <% for (let post of posts) { %>
+      <p><%= post.text %></p>
+    <% } %>
+  <% } %>
+ </div>
+  
 </body>
 </html>
